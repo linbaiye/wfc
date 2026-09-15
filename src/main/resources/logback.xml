@@ -1,0 +1,19 @@
+<configuration>
+
+    <!-- Console Appender -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Pattern includes: Timestamp, Thread, Log Level, Logger Name, and Message -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Application Logging Level Rules -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <!-- Specific package overrides (e.g., debug your own code but keep others quiet) -->
+    <logger name="org.example" level="DEBUG" />
+
+</configuration>
