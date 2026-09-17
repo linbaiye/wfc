@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -16,8 +17,93 @@ public class Main {
         return frame;
     }*/
 
-    static List<TileCell> buildCells() {
+    static List<TileCell> buildAllCells() {
+        RealmMap realmMap = RealmMap.read("start", "test").orElseThrow(RuntimeException::new);
+        TileCell[][] cells = new TileCell[realmMap.width][realmMap.height];
+        TileCell[][] overCells = new TileCell[realmMap.width][realmMap.height];
+        List<TileCell> tiles = new LinkedList<>();
+        List<TileCell> overTiles = new LinkedList<>();
+        for (int i = 0; i < realmMap.width; i++) {
+            for (int j = 0; j < realmMap.height; j++) {
+                RealmMap.MapCell mapCell = realmMap.get(i, j);
+                TileCell tileCell = tiles.stream().filter(c -> c.has(mapCell.TileId, mapCell.TileNumber)).findFirst()
+                        .orElseGet(() -> {
+                            TileCell c = new TileCell(mapCell.TileId, mapCell.TileNumber, mapCell.isMovable());
+                            tiles.add(c);
+                            return c;
+                        });
+                cells[i][j] = tileCell;
+                if (mapCell.TileOverId < 1)
+                    continue;
+                TileCell overTileCell = overTiles.stream().filter(c -> c.has(mapCell.TileOverId, mapCell.TileOverNumber)).findFirst()
+                        .orElseGet(() -> {
+                            TileCell c = new TileCell(mapCell.TileOverId, mapCell.TileOverNumber, mapCell.isMovable());
+                            overTiles.add(c);
+                            return c;
+                        });
+                overCells[i][j] = overTileCell;
+            }
+        }
+        for (int i = 0; i < realmMap.width; i++) {
+            for (int j = 0; j < realmMap.height; j++) {
+                TileCell tileCell = cells[i][j];
+                if (j + 1 < realmMap.height)
+                    tileCell.addNeibhour(cells[i][j+1], Direction.Down);
+                if (i + 1 < realmMap.width)
+                    tileCell.addNeibhour(cells[i+1][j], Direction.Right);
+                if (i - 1 >= 0)
+                    tileCell.addNeibhour(cells[i-1][j], Direction.Left);
+                if (j - 1 >= 0)
+                    tileCell.addNeibhour(cells[i][j-1], Direction.Up);
 
+                if (j + 1 < realmMap.height) {
+                    TileCell overcell = overCells[i][j + 1];
+                    if (overcell != null) {
+                        tileCell.addNeibhour(overcell, Direction.Down);
+                        overcell.addNeibhour(tileCell, Direction.Up);
+                    }
+                }
+                if (i + 1 < realmMap.width) {
+                    TileCell overcell = overCells[i+ 1][j];
+                    if (overcell != null) {
+                        tileCell.addNeibhour(overcell, Direction.Right);
+                        overcell.addNeibhour(tileCell, Direction.Left);
+                    }
+                }
+                if (i - 1 >= 0) {
+                    TileCell overcell = overCells[i -1][j];
+                    if (overcell != null) {
+                        tileCell.addNeibhour(overcell, Direction.Left);
+                        overcell.addNeibhour(tileCell, Direction.Right);
+                    }
+                }
+                if (j - 1 >= 0) {
+                    TileCell overcell = overCells[i][j - 1];
+                    if (overcell != null) {
+                        tileCell.addNeibhour(overcell, Direction.Up);
+                        overcell.addNeibhour(tileCell, Direction.Down);
+                    }
+                }
+            }
+        }
+        tiles.addAll(overTiles);
+        return tiles;
+    }
+
+    static List<TileCell> findEdgeCells() {
+        RealmMap realmMap = RealmMap.read("start", "test").orElseThrow(RuntimeException::new);
+        for (int i = 0; i < realmMap.width; i++) {
+            for (int j = 0; j < realmMap.height; j++) {
+                RealmMap.MapCell mapCell = realmMap.get(i, j);
+                if (mapCell.isMovable()) {
+
+                }
+            }
+        }
+        return null;
+    }
+
+    static List<TileCell> buildCells() {
         RealmMap realmMap = RealmMap.read("start", "test").orElseThrow(RuntimeException::new);
         TileCell[][] cells = new TileCell[realmMap.width][realmMap.height];
         List<TileCell> cellList = new LinkedList<>();
@@ -183,11 +269,23 @@ public class Main {
     }
 
 
-    static void collapseMap() {
+    static void collapseMap() throws IOException {
+        List<TileCell> allCells = buildAllCells();
         List<TileCell> cellList = buildCells();
-        WFC wfc = new WFC(30, 30, cellList);
-        wfc.run();
-        wfc.draw();
+        while (true) {
+            WFC wfc = new WFC(30, 30, cellList);
+            wfc.run();
+            if (wfc.checkBlacks() <= 0.08f) {
+                var w = wfc.draw();
+                wfc.fillBlack(w, allCells);
+                break;
+            }
+            /*if (!wfc.hasContradiction()) {
+                var w = wfc.draw();
+                w.write();
+                break;
+            }*/
+        }
     }
 
     static void collapseDemo() {

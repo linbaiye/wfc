@@ -1,14 +1,21 @@
 package org.example;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Window {
 
+    private static final Logger log = LoggerFactory.getLogger(Window.class);
     private JFrame jFrame;
 
     private BufferedImage combinedImage;
@@ -38,11 +45,34 @@ public class Window {
         graphics2D.drawImage(blackImage, x * 32, y * 24, (x+1)*32, (y+1) * 24, 0, 0,  32, 24, null);
     }
 
+    public void drawObject(int x, int y, int objId, int objNumber) {
+        try (InputStream is = getClass().getResourceAsStream("/obj/" + objId + "/" + objNumber + ".png")) {
+            BufferedImage read = ImageIO.read(is);
+            graphics2D.drawImage(read, x * 32, y * 24, (x+1)*32, (y+1) * 24, objNumber * 32, 0, (objNumber + 1) * 32, 24, null);
+        } catch (IOException e) {
+            throw new RuntimeException("Cant open " + objId);
+        }
+    }
+
     public void display() {
         JLabel jLabel = new JLabel();
         jLabel.setIcon(new ImageIcon(combinedImage));
         jFrame.add(jLabel);
         jFrame.pack();
         jFrame.setVisible(true);
+    }
+
+    public void close() {
+        jFrame.setVisible(false);
+        jFrame.dispose();
+    }
+
+    public void write() {
+        try {
+            File output_file = new File("map.png");
+            ImageIO.write(combinedImage, "png", output_file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

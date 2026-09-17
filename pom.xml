@@ -41,6 +41,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.sjcasey21</groupId>
+            <artifactId>wavefunctioncollapse</artifactId>
+            <version>0.2.2</version>
+        </dependency>
+
 
     </dependencies>
 

@@ -170,12 +170,16 @@ final class RealmMap {
         return Optional.empty();
     }
 
+    public boolean inRange(Index index) {
+        return index.x() >= 0 && index.x() < width &&
+                index.y() >= 0 && index.y() < height;
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
         RealmMap map = RealmMap.read("start", "test")
                 .orElseThrow(IllegalArgumentException::new);
-        log.info("Width {}, height {}.", map.width, map.height);
-        for (int i = 0; i < 200; i++) {
-            for (int j = 0; j < 200; j++) {
+        for (int i = 0; i < map.width; i++) {
+            for (int j = 0; j < map.height; j++) {
                 MapCell cell = map.get(i, j);
                 var str = String.format("%3d-%2d", cell.TileId, cell.TileNumber);
                 System.out.print(str);
@@ -183,5 +187,19 @@ final class RealmMap {
             }
             System.out.println();
         }
+        Set<Index> tiles = new HashSet<>();
+        Set<Index> overTiles = new HashSet<>();
+        for (int i = 0; i < map.width; i++) {
+            for (int j = 0; j < map.height; j++) {
+                MapCell cell = map.get(i, j);
+                if (cell.TileId > 0) {
+                    tiles.add(new Index(cell.TileId, cell.TileNumber));
+                }
+                if (cell.TileOverId > 0) {
+                    overTiles.add(new Index(cell.TileOverId, cell.TileOverNumber));
+                }
+            }
+        }
+        log.info("Width {}, height {}, tile {}, tileOver {}, movable {}.", map.width, map.height, tiles.size(), overTiles.size(), 0);
     }
 }
