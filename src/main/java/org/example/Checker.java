@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
+public class Checker {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     /*private static JFrame create() {
         JFrame frame = new JFrame("Java 2D drawImage Example");
@@ -500,7 +500,7 @@ public class Main {
         while (true) {
             WFC wfc = new WFC(30, 30, cellList);
             wfc.run();
-            if (wfc.checkBlacks() <= 0.05f) {
+            if (wfc.checkBlacks() <= 0.03f) {
                 var w = wfc.draw();
                 //wfc.fillBlack(w, allCells);
                 break;
@@ -667,19 +667,16 @@ public class Main {
     }));
 
     static Set<Integer> PERFECT_FOUR = new HashSet<>(Arrays.asList(new Integer[]{
-            4,
-            5, 6, 9, 10, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 88, 90, 91, 92, 94, 98, 99, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252, 253, 254, 261, 262, 263, 264, 265, 271, 272, 273, 274, 275, 276, 277, 278, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 383, 384, 385, 386, 387, 388, 389, 390, 391, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 423, 424, 425, 426, 427, 428, 711, 712, 713, 761
+            4, 5, 6, 9, 10, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 88, 90, 91, 92, 94, 98, 99, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252, 253, 254, 261, 262, 263, 264, 265, 271, 272, 273, 274, 275, 276, 277, 278, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 383, 384, 385, 386, 387, 388, 389, 390, 391, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 423, 424, 425, 426, 427, 428, 711, 712, 713, 761
     }));
 
     static Set<Integer> PERFECT_TWO = new HashSet<>(Arrays.asList(new Integer[] {
-            1, 3,
-            //4,
-            7, 19, 20, 53, 54, 105, 108, 381, 382, 401, 402, 403, 404, 421, 422, 713, 761, 912,
+            1, 3, 4, 7, 19, 20, 53, 54, 105, 108, 381, 382, 401, 402, 403, 404, 421, 422, 713, 761, 912,
     }));
 
     static Set<Integer> PERFECT_ONE = new HashSet<>(Arrays.asList(new Integer[] {
             54, 915, 916, 1008, 1009, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 917, 918, 919, 920, 921, 922, 923, 924, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 111, 901,
-            54, 713, 761, 19, 20, 713, 761
+            54, 713, 761, 7, 19, 20, 713, 761
     }));
 
     static Set<Integer> SUSPICIOUS_TWO = new HashSet<>(Arrays.asList(new Integer[]
@@ -713,9 +710,9 @@ public class Main {
         all.addAll(PERFECT_THREE);
         all.addAll(PERFECT_SEVEN);*/
         for (int i = 1; i < 1024; i++) {
-            if (!Set.of(7).contains(i))
+            if (!Set.of(4).contains(i))
                 continue;
-            var w = draw(i, 2);
+            var w = draw(i, 4);
             if (w == null)
                 continue;
             AtomicInteger current = new AtomicInteger(i);
@@ -733,12 +730,12 @@ public class Main {
 
     static void main() throws Exception {
         //collapseDemo();
-        collapseMap();
+        //collapseMap();
         //generate();
         //checkIntersection(88);
         //List<TileCell> list = new ArrayList<>();
         //initLeft(list);
         //dumpAdj(list, 8);
-        // manualCheck();
+        manualCheck();
     }
 }

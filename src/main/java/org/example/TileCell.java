@@ -7,7 +7,7 @@ import java.util.function.Function;
 public class TileCell {
     public final int id;
     public final int number;
-    private final boolean movable;
+    private boolean movable;
 
     private final Map<Direction, Set<TileCell>> neibhours;
 
@@ -16,6 +16,10 @@ public class TileCell {
         this.number = number;
         this.neibhours = new HashMap<>();
         this.movable = movable;
+    }
+
+    public void changeMove(boolean m) {
+        this.movable = m;
     }
 
     public boolean has(int tileId, int tileNumber) {
