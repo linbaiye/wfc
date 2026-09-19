@@ -22,7 +22,7 @@ public class WFC {
         var movable = cellList.stream().filter(TileCell::isMovable).toList();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                grids[i][j] = new Grid(movable);
+                grids[i][j] = new Grid(cells);
             }
         }
     }
